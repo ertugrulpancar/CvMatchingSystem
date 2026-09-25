@@ -1,0 +1,43 @@
+{
+  "app": {
+    "title": "CV ↔ İlan Eşleştirme"
+  },
+  "newAnalysis": {
+    "jobLabel": "İş İlanı",
+    "jobPlaceholder": "İlan metnini buraya yapıştırın...",
+    "cvLabel": "CV",
+    "cvModeFile": "Dosya Yükle",
+    "cvModeText": "Metin Yapıştır",
+    "cvFileHint": "PDF veya DOCX, en fazla 4 MB",
+    "cvTextPlaceholder": "CV metnini buraya yapıştırın...",
+    "privacyNotice": "CV'niz analiz için Google Gemini'ye gönderilir, CV metni saklanmaz.",
+    "submit": "Analiz Et",
+    "submitting": "Analiz ediliyor...",
+    "errorGeneric": "Analiz sırasında bir hata oluştu.",
+    "errorMissingCv": "Lütfen bir CV dosyası yükleyin veya CV metni yapıştırın.",
+    "errorMissingJob": "Lütfen ilan metnini girin."
+  },
+  "result": {
+    "title": "Analiz Sonucu",
+    "overallScore": "Genel Uyum Skoru",
+    "categoryScores": "Kategori Skorları",
+    "requirements": "Gereksinimler"
+  },
+  "category": {
+    "technical_skill": "Teknik Beceri",
+    "tool": "Araç",
+    "experience": "Deneyim",
+    "education": "Eğitim",
+    "language": "Dil",
+    "soft_skill": "Kişisel Beceri"
+  },
+  "importance": {
+    "must_have": "Zorunlu",
+    "nice_to_have": "Tercih Sebebi"
+  },
+  "status": {
+    "met": "Karşılanıyor",
+    "partial": "Kısmen Karşılanıyor",
+    "missing": "Eksik"
+  }
+}

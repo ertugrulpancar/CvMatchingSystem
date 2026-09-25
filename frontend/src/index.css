@@ -1,0 +1,128 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+}
+
+.app-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+textarea,
+input[type='file'] {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.5rem;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mode-toggle button {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+
+.mode-toggle button.active {
+  background: currentColor;
+  color: Canvas;
+}
+
+.hint {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin: 0.2rem 0;
+}
+
+.privacy-notice {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.error {
+  color: #c0392b;
+}
+
+button[type='submit'] {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.result {
+  margin-top: 2rem;
+  border-top: 1px solid currentColor;
+  padding-top: 1.5rem;
+}
+
+.overall-score {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.requirement-list ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.requirement-list li {
+  border-left: 4px solid currentColor;
+  padding: 0.5rem 0.75rem;
+}
+
+.requirement-list li.status-met {
+  border-left-color: #2e7d32;
+}
+
+.requirement-list li.status-partial {
+  border-left-color: #f9a825;
+}
+
+.requirement-list li.status-missing {
+  border-left-color: #c0392b;
+}
+
+.requirement-list .meta {
+  display: block;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.requirement-list .evidence {
+  font-style: italic;
+  opacity: 0.85;
+}

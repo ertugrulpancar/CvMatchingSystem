@@ -1,0 +1,43 @@
+{
+  "app": {
+    "title": "CV ↔ Job Matching"
+  },
+  "newAnalysis": {
+    "jobLabel": "Job Posting",
+    "jobPlaceholder": "Paste the job posting text here...",
+    "cvLabel": "CV",
+    "cvModeFile": "Upload File",
+    "cvModeText": "Paste Text",
+    "cvFileHint": "PDF or DOCX, max 4 MB",
+    "cvTextPlaceholder": "Paste your CV text here...",
+    "privacyNotice": "Your CV is sent to Google Gemini for analysis; the CV text is not stored.",
+    "submit": "Analyze",
+    "submitting": "Analyzing...",
+    "errorGeneric": "Something went wrong during the analysis.",
+    "errorMissingCv": "Please upload a CV file or paste CV text.",
+    "errorMissingJob": "Please enter the job posting text."
+  },
+  "result": {
+    "title": "Analysis Result",
+    "overallScore": "Overall Match Score",
+    "categoryScores": "Category Scores",
+    "requirements": "Requirements"
+  },
+  "category": {
+    "technical_skill": "Technical Skill",
+    "tool": "Tool",
+    "experience": "Experience",
+    "education": "Education",
+    "language": "Language",
+    "soft_skill": "Soft Skill"
+  },
+  "importance": {
+    "must_have": "Must-have",
+    "nice_to_have": "Nice-to-have"
+  },
+  "status": {
+    "met": "Met",
+    "partial": "Partially Met",
+    "missing": "Missing"
+  }
+}
