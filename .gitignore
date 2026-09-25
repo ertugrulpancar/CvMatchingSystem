@@ -23,3 +23,7 @@ dist/
 
 # OS
 .DS_Store
+
+# Planlama/notlar (public repoda görünmesin, sadece lokalde kalsın)
+CLAUDE.md
+docs/PLAN.md
