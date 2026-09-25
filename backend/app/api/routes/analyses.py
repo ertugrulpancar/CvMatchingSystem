@@ -1,15 +1,23 @@
+from datetime import datetime
 from typing import Literal
+from uuid import UUID
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 
+from app.api.deps import get_repository
 from app.core.config import get_settings
-from app.schemas.analysis import AnalysisResult
+from app.repositories.base import AnalysisRepository
+from app.schemas.analysis import AnalysisResult, AnalysisSummary
 from app.services.analysis_service import run_analysis
 from app.services.llm.client import GeminiError
 from app.services.parsing import EmptyTextError, UnsupportedFileTypeError, parse_document
 from app.services.scoring import EmptyRequirementsError
 
 router = APIRouter()
+
+# TODO (Faz 6): Google OAuth eklenince bunun yerine `Depends(get_current_user)`
+# kullanılacak ve her sorgu gerçek kullanıcıya göre filtrelenecek.
+_DEV_USER_ID = UUID("00000000-0000-0000-0000-000000000001")
 
 
 @router.post("/analyses", response_model=AnalysisResult, status_code=201)
@@ -18,6 +26,7 @@ async def create_analysis(
     output_language: Literal["tr", "en"] = Form(...),
     cv_text: str | None = Form(None),
     cv_file: UploadFile | None = File(None),
+    repository: AnalysisRepository = Depends(get_repository),
 ) -> AnalysisResult:
     settings = get_settings()
 
@@ -32,13 +41,14 @@ async def create_analysis(
         if len(content) > settings.max_upload_bytes:
             raise HTTPException(status_code=413, detail="Dosya çok büyük")
         try:
-            resolved_cv_text = parse_document(cv_file.filename or "", content).text
+            parsed = parse_document(cv_file.filename or "", content)
         except UnsupportedFileTypeError as exc:
             raise HTTPException(status_code=415, detail=str(exc)) from exc
         except EmptyTextError as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
+        resolved_cv_text, cv_source = parsed.text, parsed.source
     else:
-        resolved_cv_text = cv_text or ""
+        resolved_cv_text, cv_source = cv_text or "", "text"
 
     if len(resolved_cv_text) > settings.max_cv_chars:
         raise HTTPException(status_code=422, detail="CV metni çok uzun")
@@ -47,9 +57,44 @@ async def create_analysis(
 
     try:
         return run_analysis(
-            cv_text=resolved_cv_text, job_text=job_text, output_language=output_language
+            user_id=_DEV_USER_ID,
+            cv_text=resolved_cv_text,
+            cv_source=cv_source,
+            job_text=job_text,
+            output_language=output_language,
+            repository=repository,
         )
     except EmptyRequirementsError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except GeminiError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.get("/analyses", response_model=list[AnalysisSummary])
+def list_analyses(
+    before: datetime | None = Query(None),
+    limit: int = Query(20, ge=1, le=100),
+    repository: AnalysisRepository = Depends(get_repository),
+) -> list[AnalysisSummary]:
+    return repository.list_summaries(user_id=_DEV_USER_ID, before=before, limit=limit)
+
+
+@router.get("/analyses/{analysis_id}", response_model=AnalysisResult)
+def get_analysis(
+    analysis_id: UUID,
+    repository: AnalysisRepository = Depends(get_repository),
+) -> AnalysisResult:
+    result = repository.get(user_id=_DEV_USER_ID, analysis_id=analysis_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Analiz bulunamadı")
+    return result
+
+
+@router.delete("/analyses/{analysis_id}", status_code=204)
+def delete_analysis(
+    analysis_id: UUID,
+    repository: AnalysisRepository = Depends(get_repository),
+) -> None:
+    deleted = repository.delete(user_id=_DEV_USER_ID, analysis_id=analysis_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Analiz bulunamadı")

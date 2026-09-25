@@ -10,3 +10,18 @@ import os
 os.environ["MATCHER"] = "keyword"
 os.environ["GEMINI_API_KEY"] = ""
 os.environ["DATABASE_URL"] = ""
+
+import pytest  # noqa: E402
+
+from app.api.deps import get_repository  # noqa: E402
+from app.main import app  # noqa: E402
+from app.repositories.memory_repository import InMemoryAnalysisRepository  # noqa: E402
+
+
+@pytest.fixture
+def analysis_repository() -> InMemoryAnalysisRepository:
+    """API testleri gerçek DB'ye değil, bu InMemory repoya yazar (CLAUDE.md)."""
+    repository = InMemoryAnalysisRepository()
+    app.dependency_overrides[get_repository] = lambda: repository
+    yield repository
+    app.dependency_overrides.pop(get_repository, None)
