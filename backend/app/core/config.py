@@ -3,6 +3,21 @@ from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from app.schemas.requirement import Importance, MatchStatus
+
+# Skorlama kuralları: ortam değişkeni değil, sabit iş kuralı. Tek yerden okunsun
+# diye burada tutulur (PLAN.md §5d).
+IMPORTANCE_WEIGHTS: dict[Importance, int] = {
+    Importance.MUST_HAVE: 2,
+    Importance.NICE_TO_HAVE: 1,
+}
+
+STATUS_POINTS: dict[MatchStatus, float] = {
+    MatchStatus.MET: 1.0,
+    MatchStatus.PARTIAL: 0.5,
+    MatchStatus.MISSING: 0.0,
+}
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
