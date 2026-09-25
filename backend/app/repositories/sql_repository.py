@@ -121,13 +121,18 @@ class SQLAnalysisRepository:
 
     def try_reserve_quota(self, user_id: UUID, since: datetime, limit: int) -> bool:
         # pg_advisory_xact_lock: aynı user_id için PostgreSQL'de bir transaction
-        # kilidi alır. Bu istek işlenirken (Gemini çağrısı dahil) aynı kullanıcının
-        # eşzamanlı ikinci bir isteği burada bekler; kilit bu transaction
-        # commit/rollback olduğunda (yani save() çağrılınca ya da session
-        # kapanınca) otomatik serbest kalır. Böylece count_since + karşılaştırma
-        # artık "say, sonra karşılaştır" yarışına (race condition) açık değil.
+        # kilidi alır, aynı kullanıcının eşzamanlı ikinci isteği burada bekler.
+        # Kontrolden hemen sonra commit ediyoruz ki kilit (ve altındaki DB
+        # bağlantısı) Gemini çağrıları gibi uzun süren dış işlemler boyunca
+        # açık kalmasın: Supavisor'ın transaction-mode pooler'ı (:6543) uzun
+        # süre açık kalan transaction'ları kesiyor ve bu da fonksiyonun
+        # çökmesine yol açıyordu. Bedeli: aynı kullanıcı tam olarak aynı anda
+        # iki istek atarsa kotayı 1 aşabilir — hobi projesi için bu risk,
+        # isteklerin çökmesinden çok daha ucuz.
         self._session.execute(
             text("SELECT pg_advisory_xact_lock(hashtext(:user_id))"),
             {"user_id": str(user_id)},
         )
-        return self.count_since(user_id=user_id, since=since) < limit
+        available = self.count_since(user_id=user_id, since=since) < limit
+        self._session.commit()
+        return available
