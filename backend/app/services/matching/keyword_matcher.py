@@ -2,6 +2,7 @@ import re
 from typing import Literal
 
 from app.schemas.requirement import Importance, MatchStatus, RequirementMatch
+from app.services.matching.base import MatchResult
 from app.services.matching.skills_dictionary import SKILLS
 
 # 'i'/'I' Türkçe'de İngilizce'den farklı davranır (İ/ı), bu yüzden düz
@@ -39,7 +40,7 @@ def _find_first(text: str, terms: list[str]) -> re.Match[str] | None:
 class KeywordMatcher:
     def match(
         self, job_text: str, cv_text: str, output_language: Literal["tr", "en"]
-    ) -> list[RequirementMatch]:
+    ) -> MatchResult:
         matches: list[RequirementMatch] = []
 
         for skill in SKILLS:
@@ -65,4 +66,4 @@ class KeywordMatcher:
                 )
             )
 
-        return matches
+        return MatchResult(job_title=None, company_name=None, matches=matches)

@@ -5,6 +5,7 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from app.core.config import get_settings
 from app.schemas.analysis import AnalysisResult
 from app.services.analysis_service import run_analysis
+from app.services.llm.client import GeminiError
 from app.services.parsing import EmptyTextError, UnsupportedFileTypeError, parse_document
 from app.services.scoring import EmptyRequirementsError
 
@@ -50,3 +51,5 @@ async def create_analysis(
         )
     except EmptyRequirementsError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except GeminiError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
