@@ -4,9 +4,14 @@
     "signOut": "Çıkış Yap"
   },
   "login": {
-    "title": "Giriş Yap",
-    "description": "Analiz yapabilmek için Google hesabınızla giriş yapmalısınız.",
-    "googleButton": "Google ile Giriş Yap"
+    "badge": "Yapay Zekâ Destekli",
+    "title": "CV'nizin ilana uyumunu saniyeler içinde görün",
+    "subtitle": "Google hesabınızla giriş yapın; CV'nizi ve ilan metnini yapıştırın, gerekçeli ve puanlı bir uyum analizi alın.",
+    "feature1": "Gereksinim bazlı uyum skoru",
+    "feature2": "Kanıta dayalı, açıklamalı sonuçlar",
+    "feature3": "CV metniniz saklanmaz",
+    "googleButton": "Google ile Giriş Yap",
+    "privacyNote": "Yalnızca analiz için kullanılır, kalıcı olarak saklanmaz."
   },
   "newAnalysis": {
     "jobLabel": "İş İlanı",
