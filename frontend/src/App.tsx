@@ -1,7 +1,12 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './auth/AuthProvider'
+import { ProtectedRoute } from './auth/ProtectedRoute'
+import { useAuth } from './auth/useAuth'
 import type { Language } from './i18n/context'
 import { LanguageProvider } from './i18n/LanguageContext'
-import { NewAnalysisPage } from './pages/NewAnalysisPage'
 import { useLanguage } from './i18n/useLanguage'
+import { LoginPage } from './pages/LoginPage'
+import { NewAnalysisPage } from './pages/NewAnalysisPage'
 
 function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage()
@@ -14,6 +19,21 @@ function LanguageSwitcher() {
   )
 }
 
+function SignOutButton() {
+  const { session, signOut } = useAuth()
+  const { t } = useLanguage()
+
+  if (!session) {
+    return null
+  }
+
+  return (
+    <button type="button" onClick={() => void signOut()}>
+      {t('app.signOut')}
+    </button>
+  )
+}
+
 function AppShell() {
   const { t } = useLanguage()
 
@@ -21,10 +41,24 @@ function AppShell() {
     <div className="app-shell">
       <header>
         <h1>{t('app.title')}</h1>
-        <LanguageSwitcher />
+        <div className="header-actions">
+          <LanguageSwitcher />
+          <SignOutButton />
+        </div>
       </header>
       <main>
-        <NewAnalysisPage />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <NewAnalysisPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
     </div>
   )
@@ -33,7 +67,11 @@ function AppShell() {
 export default function App() {
   return (
     <LanguageProvider>
-      <AppShell />
+      <BrowserRouter>
+        <AuthProvider>
+          <AppShell />
+        </AuthProvider>
+      </BrowserRouter>
     </LanguageProvider>
   )
 }

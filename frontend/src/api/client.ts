@@ -1,3 +1,4 @@
+import { supabase } from '../lib/supabase'
 import type { components } from './schema'
 
 export type AnalysisResult = components['schemas']['AnalysisResult']
@@ -13,6 +14,13 @@ export class ApiError extends Error {
     super(message)
     this.status = status
   }
+}
+
+async function authHeaders(): Promise<HeadersInit> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  return session ? { Authorization: `Bearer ${session.access_token}` } : {}
 }
 
 type CreateAnalysisParams = {
@@ -32,10 +40,9 @@ export async function createAnalysis(params: CreateAnalysisParams): Promise<Anal
     formData.set('cv_text', params.cvText)
   }
 
-  // NOT: Bu istek şu an Authorization header'ı göndermiyor çünkü auth henüz
-  // eklenmedi (Faz 6). O fazda buraya `Bearer <supabase_access_token>` eklenecek.
   const response = await fetch(`${BASE_URL}/api/v1/analyses`, {
     method: 'POST',
+    headers: await authHeaders(),
     body: formData,
   })
 

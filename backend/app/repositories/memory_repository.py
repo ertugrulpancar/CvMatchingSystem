@@ -57,3 +57,10 @@ class InMemoryAnalysisRepository:
             return False
         del self._analyses[analysis_id]
         return True
+
+    def count_since(self, user_id: UUID, since: datetime) -> int:
+        return sum(
+            1
+            for owner_id, result in self._analyses.values()
+            if owner_id == user_id and result.created_at > since
+        )

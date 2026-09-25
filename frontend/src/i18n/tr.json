@@ -1,6 +1,12 @@
 {
   "app": {
-    "title": "CV ↔ İlan Eşleştirme"
+    "title": "CV ↔ İlan Eşleştirme",
+    "signOut": "Çıkış Yap"
+  },
+  "login": {
+    "title": "Giriş Yap",
+    "description": "Analiz yapabilmek için Google hesabınızla giriş yapmalısınız.",
+    "googleButton": "Google ile Giriş Yap"
   },
   "newAnalysis": {
     "jobLabel": "İş İlanı",

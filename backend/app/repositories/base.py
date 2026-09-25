@@ -33,6 +33,8 @@ class AnalysisRepository(Protocol):
 
     def delete(self, user_id: UUID, analysis_id: UUID) -> bool: ...
 
+    def count_since(self, user_id: UUID, since: datetime) -> int: ...
+
 
 def build_analysis_result(
     *,

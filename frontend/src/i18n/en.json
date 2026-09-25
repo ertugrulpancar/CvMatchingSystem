@@ -1,6 +1,12 @@
 {
   "app": {
-    "title": "CV ↔ Job Matching"
+    "title": "CV ↔ Job Matching",
+    "signOut": "Sign Out"
+  },
+  "login": {
+    "title": "Sign In",
+    "description": "You need to sign in with your Google account to run an analysis.",
+    "googleButton": "Sign in with Google"
   },
   "newAnalysis": {
     "jobLabel": "Job Posting",

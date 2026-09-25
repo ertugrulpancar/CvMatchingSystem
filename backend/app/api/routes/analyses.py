@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from typing import Literal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 
 from app.api.deps import get_repository
+from app.core.auth import get_current_user
 from app.core.config import get_settings
 from app.repositories.base import AnalysisRepository
 from app.schemas.analysis import AnalysisResult, AnalysisSummary
@@ -15,10 +16,6 @@ from app.services.scoring import EmptyRequirementsError
 
 router = APIRouter()
 
-# TODO (Faz 6): Google OAuth eklenince bunun yerine `Depends(get_current_user)`
-# kullanılacak ve her sorgu gerçek kullanıcıya göre filtrelenecek.
-_DEV_USER_ID = UUID("00000000-0000-0000-0000-000000000001")
-
 
 @router.post("/analyses", response_model=AnalysisResult, status_code=201)
 async def create_analysis(
@@ -26,9 +23,16 @@ async def create_analysis(
     output_language: Literal["tr", "en"] = Form(...),
     cv_text: str | None = Form(None),
     cv_file: UploadFile | None = File(None),
+    user_id: UUID = Depends(get_current_user),
     repository: AnalysisRepository = Depends(get_repository),
 ) -> AnalysisResult:
     settings = get_settings()
+
+    daily_count = repository.count_since(
+        user_id=user_id, since=datetime.now(UTC) - timedelta(days=1)
+    )
+    if daily_count >= settings.daily_analysis_limit:
+        raise HTTPException(status_code=429, detail="Günlük analiz kotası aşıldı")
 
     if bool(cv_file) == bool(cv_text):
         raise HTTPException(
@@ -57,7 +61,7 @@ async def create_analysis(
 
     try:
         return run_analysis(
-            user_id=_DEV_USER_ID,
+            user_id=user_id,
             cv_text=resolved_cv_text,
             cv_source=cv_source,
             job_text=job_text,
@@ -74,17 +78,19 @@ async def create_analysis(
 def list_analyses(
     before: datetime | None = Query(None),
     limit: int = Query(20, ge=1, le=100),
+    user_id: UUID = Depends(get_current_user),
     repository: AnalysisRepository = Depends(get_repository),
 ) -> list[AnalysisSummary]:
-    return repository.list_summaries(user_id=_DEV_USER_ID, before=before, limit=limit)
+    return repository.list_summaries(user_id=user_id, before=before, limit=limit)
 
 
 @router.get("/analyses/{analysis_id}", response_model=AnalysisResult)
 def get_analysis(
     analysis_id: UUID,
+    user_id: UUID = Depends(get_current_user),
     repository: AnalysisRepository = Depends(get_repository),
 ) -> AnalysisResult:
-    result = repository.get(user_id=_DEV_USER_ID, analysis_id=analysis_id)
+    result = repository.get(user_id=user_id, analysis_id=analysis_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Analiz bulunamadı")
     return result
@@ -93,8 +99,9 @@ def get_analysis(
 @router.delete("/analyses/{analysis_id}", status_code=204)
 def delete_analysis(
     analysis_id: UUID,
+    user_id: UUID = Depends(get_current_user),
     repository: AnalysisRepository = Depends(get_repository),
 ) -> None:
-    deleted = repository.delete(user_id=_DEV_USER_ID, analysis_id=analysis_id)
+    deleted = repository.delete(user_id=user_id, analysis_id=analysis_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Analiz bulunamadı")

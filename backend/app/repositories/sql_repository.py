@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.analysis import AnalysisItemModel, AnalysisModel
@@ -110,3 +110,11 @@ class SQLAnalysisRepository:
         self._session.delete(row)
         self._session.commit()
         return True
+
+    def count_since(self, user_id: UUID, since: datetime) -> int:
+        stmt = (
+            select(func.count())
+            .select_from(AnalysisModel)
+            .where(AnalysisModel.user_id == user_id, AnalysisModel.created_at > since)
+        )
+        return self._session.scalar(stmt) or 0
