@@ -5,8 +5,6 @@ metin yapıştırma) ve bir iş ilanı metnini verir. Uygulama ilanı yapıland�
 her gereksinim için CV'de karşılığı olup olmadığını CV'den birebir alıntıyla belirler, ağırlıklı
 ortalama ile bir uyum skoru hesaplar ve sonucu kullanıcının geçmişine kaydeder.
 
-Mimari, veri modeli ve tasarım kararlarının tam dökümü için **[docs/PLAN.md](docs/PLAN.md)**'a bakın.
-
 ## Mimari
 
 ```
