@@ -1,0 +1,13 @@
+Junior Backend Developer
+
+We are looking for a junior backend developer to join our team.
+
+Must-have:
+- At least 1 year of experience with Python
+- Basic knowledge of SQL databases
+- Experience with Git version control
+
+Nice-to-have:
+- Experience with FastAPI or a similar web framework
+- Basic knowledge of Docker
+- Good written English communication skills

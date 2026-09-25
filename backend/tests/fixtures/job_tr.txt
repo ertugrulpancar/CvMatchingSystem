@@ -1,0 +1,13 @@
+Junior Backend Geliştirici
+
+Şirketimiz için junior seviye bir backend geliştirici arıyoruz.
+
+Zorunlu Nitelikler:
+- Python dilinde en az 1 yıl deneyim
+- SQL veritabanları hakkında temel bilgi
+- Git ile versiyon kontrolü deneyimi
+
+Tercih Sebepleri:
+- FastAPI veya benzeri bir web framework deneyimi
+- Docker hakkında temel bilgi
+- İngilizce iletişim becerisi
