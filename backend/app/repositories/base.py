@@ -35,6 +35,15 @@ class AnalysisRepository(Protocol):
 
     def count_since(self, user_id: UUID, since: datetime) -> int: ...
 
+    def try_reserve_quota(self, user_id: UUID, since: datetime, limit: int) -> bool:
+        """`count_since(...) < limit` ile aynı sonucu döner, ama bunu aynı
+        kullanıcının eşzamanlı istekleri arasında atomik yapar (bkz. SQL
+        implementasyonundaki advisory lock). Route katmanı artık "say, sonra
+        karşılaştır" yapmak yerine bu tek metodu çağırır; aradaki fark, sayma
+        ve karşılaştırmanın artık bölünemez (aynı anda başka bir isteğin araya
+        giremeyeceği) bir işlem olması."""
+        ...
+
 
 def build_analysis_result(
     *,

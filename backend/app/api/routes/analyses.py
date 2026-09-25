@@ -28,10 +28,12 @@ async def create_analysis(
 ) -> AnalysisResult:
     settings = get_settings()
 
-    daily_count = repository.count_since(
-        user_id=user_id, since=datetime.now(UTC) - timedelta(days=1)
+    quota_available = repository.try_reserve_quota(
+        user_id=user_id,
+        since=datetime.now(UTC) - timedelta(days=1),
+        limit=settings.daily_analysis_limit,
     )
-    if daily_count >= settings.daily_analysis_limit:
+    if not quota_available:
         raise HTTPException(status_code=429, detail="Günlük analiz kotası aşıldı")
 
     if bool(cv_file) == bool(cv_text):
@@ -71,7 +73,12 @@ async def create_analysis(
     except EmptyRequirementsError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except GeminiError as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
+        # str(exc) kasıtlı olarak kullanıcıya dönülmüyor: SDK'nın ham hata
+        # mesajı iç sistem detayları içerebilir. `from exc` sayesinde asıl
+        # sebep sunucu taraflı traceback'te hâlâ görünür kalır.
+        raise HTTPException(
+            status_code=502, detail="Gemini isteği başarısız oldu, lütfen tekrar deneyin"
+        ) from exc
 
 
 @router.get("/analyses", response_model=list[AnalysisSummary])
