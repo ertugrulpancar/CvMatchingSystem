@@ -53,7 +53,7 @@ export function NewAnalysisPage() {
   }
 
   return (
-    <div className="new-analysis-page">
+    <div>
       <form onSubmit={handleSubmit}>
         <JobInput value={jobText} onChange={setJobText} />
         <CvInput
@@ -64,20 +64,18 @@ export function NewAnalysisPage() {
           cvFile={cvFile}
           onCvFileChange={setCvFile}
         />
-        <p className="privacy-notice">{t('newAnalysis.privacyNotice')}</p>
-        {error && (
-          <p role="alert" className="error">
-            {error}
-          </p>
-        )}
-        <button type="submit" disabled={isSubmitting}>
+
+        {error && <p className="error-banner">{error}</p>}
+
+        <button type="submit" className="btn btn-primary btn-block" disabled={isSubmitting}>
           {isSubmitting ? t('newAnalysis.submitting') : t('newAnalysis.submit')}
         </button>
+        <p className="privacy-notice">{t('newAnalysis.privacyNotice')}</p>
       </form>
 
       {result && (
         <section className="result">
-          <h2>{t('result.title')}</h2>
+          <span className="result-title">{t('result.title')}</span>
           <ScoreCard overallScore={result.overall_score} categoryScores={result.category_scores} />
           <RequirementList matches={result.matches} />
         </section>

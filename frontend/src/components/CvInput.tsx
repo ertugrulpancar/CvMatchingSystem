@@ -1,3 +1,4 @@
+import { Upload } from 'lucide-react'
 import { useLanguage } from '../i18n/useLanguage'
 
 type CvMode = 'file' | 'text'
@@ -24,17 +25,21 @@ export function CvInput({
   return (
     <div className="field">
       <label>{t('newAnalysis.cvLabel')}</label>
-      <div className="mode-toggle">
+      <div className="tabs" role="tablist">
         <button
           type="button"
-          className={mode === 'file' ? 'active' : ''}
+          role="tab"
+          aria-selected={mode === 'file'}
+          className={`tab ${mode === 'file' ? 'active' : ''}`}
           onClick={() => onModeChange('file')}
         >
           {t('newAnalysis.cvModeFile')}
         </button>
         <button
           type="button"
-          className={mode === 'text' ? 'active' : ''}
+          role="tab"
+          aria-selected={mode === 'text'}
+          className={`tab ${mode === 'text' ? 'active' : ''}`}
           onClick={() => onModeChange('text')}
         >
           {t('newAnalysis.cvModeText')}
@@ -42,21 +47,24 @@ export function CvInput({
       </div>
 
       {mode === 'file' ? (
-        <div>
+        <label className="file-drop">
+          <Upload size={22} />
+          <span className="file-name">
+            {cvFile ? cvFile.name : t('newAnalysis.cvFileCta')}
+          </span>
+          {!cvFile && <span className="hint">{t('newAnalysis.cvFileHint')}</span>}
           <input
             type="file"
             accept=".pdf,.docx"
             onChange={(event) => onCvFileChange(event.target.files?.[0] ?? null)}
           />
-          <p className="hint">{t('newAnalysis.cvFileHint')}</p>
-          {cvFile && <p className="hint">{cvFile.name}</p>}
-        </div>
+        </label>
       ) : (
         <textarea
           value={cvText}
           onChange={(event) => onCvTextChange(event.target.value)}
           placeholder={t('newAnalysis.cvTextPlaceholder')}
-          rows={10}
+          rows={8}
         />
       )}
     </div>

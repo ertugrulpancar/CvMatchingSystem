@@ -14,6 +14,7 @@
     "cvLabel": "CV",
     "cvModeFile": "Dosya Yükle",
     "cvModeText": "Metin Yapıştır",
+    "cvFileCta": "Dosya seçmek için tıklayın",
     "cvFileHint": "PDF veya DOCX, en fazla 4 MB",
     "cvTextPlaceholder": "CV metnini buraya yapıştırın...",
     "privacyNotice": "CV'niz analiz için Google Gemini'ye gönderilir, CV metni saklanmaz.",

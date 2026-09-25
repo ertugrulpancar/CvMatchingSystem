@@ -12,9 +12,14 @@ function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage()
 
   return (
-    <select value={language} onChange={(event) => setLanguage(event.target.value as Language)}>
-      <option value="tr">Türkçe</option>
-      <option value="en">English</option>
+    <select
+      className="lang-select"
+      value={language}
+      onChange={(event) => setLanguage(event.target.value as Language)}
+      aria-label="Language"
+    >
+      <option value="tr">TR</option>
+      <option value="en">EN</option>
     </select>
   )
 }
@@ -28,7 +33,7 @@ function SignOutButton() {
   }
 
   return (
-    <button type="button" onClick={() => void signOut()}>
+    <button type="button" className="btn btn-ghost" onClick={() => void signOut()}>
       {t('app.signOut')}
     </button>
   )
@@ -39,8 +44,8 @@ function AppShell() {
 
   return (
     <div className="app-shell">
-      <header>
-        <h1>{t('app.title')}</h1>
+      <header className="app-header">
+        <span className="brand">{t('app.title')}</span>
         <div className="header-actions">
           <LanguageSwitcher />
           <SignOutButton />

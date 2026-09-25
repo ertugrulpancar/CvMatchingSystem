@@ -14,6 +14,7 @@
     "cvLabel": "CV",
     "cvModeFile": "Upload File",
     "cvModeText": "Paste Text",
+    "cvFileCta": "Click to select a file",
     "cvFileHint": "PDF or DOCX, max 4 MB",
     "cvTextPlaceholder": "Paste your CV text here...",
     "privacyNotice": "Your CV is sent to Google Gemini for analysis; the CV text is not stored.",
