@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.models.analysis import AnalysisItemModel, AnalysisModel
@@ -118,3 +118,16 @@ class SQLAnalysisRepository:
             .where(AnalysisModel.user_id == user_id, AnalysisModel.created_at > since)
         )
         return self._session.scalar(stmt) or 0
+
+    def try_reserve_quota(self, user_id: UUID, since: datetime, limit: int) -> bool:
+        # pg_advisory_xact_lock: aynı user_id için PostgreSQL'de bir transaction
+        # kilidi alır. Bu istek işlenirken (Gemini çağrısı dahil) aynı kullanıcının
+        # eşzamanlı ikinci bir isteği burada bekler; kilit bu transaction
+        # commit/rollback olduğunda (yani save() çağrılınca ya da session
+        # kapanınca) otomatik serbest kalır. Böylece count_since + karşılaştırma
+        # artık "say, sonra karşılaştır" yarışına (race condition) açık değil.
+        self._session.execute(
+            text("SELECT pg_advisory_xact_lock(hashtext(:user_id))"),
+            {"user_id": str(user_id)},
+        )
+        return self.count_since(user_id=user_id, since=since) < limit

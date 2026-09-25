@@ -1,3 +1,4 @@
+import threading
 from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
@@ -8,6 +9,9 @@ from app.schemas.analysis import AnalysisResult, AnalysisSummary
 class InMemoryAnalysisRepository:
     def __init__(self) -> None:
         self._analyses: dict[UUID, tuple[UUID, AnalysisResult]] = {}
+        # SQL implementasyonundaki advisory lock'un testlerdeki karşılığı
+        # (bkz. try_reserve_quota, repositories/base.py).
+        self._quota_lock = threading.Lock()
 
     def save(self, user_id: UUID, analysis: NewAnalysis) -> AnalysisResult:
         analysis_id = uuid4()
@@ -64,3 +68,7 @@ class InMemoryAnalysisRepository:
             for owner_id, result in self._analyses.values()
             if owner_id == user_id and result.created_at > since
         )
+
+    def try_reserve_quota(self, user_id: UUID, since: datetime, limit: int) -> bool:
+        with self._quota_lock:
+            return self.count_since(user_id=user_id, since=since) < limit

@@ -24,16 +24,24 @@ TEST_USER_ID = uuid4()
 
 
 @pytest.fixture
-def analysis_repository() -> InMemoryAnalysisRepository:
-    """API testleri gerçek DB'ye ve gerçek Supabase auth'a değil, InMemory
-    repoya ve sahte bir kullanıcıya bağlanır (CLAUDE.md: `get_current_user`
-    `app.dependency_overrides` ile değiştirilir)."""
+def authenticated_user() -> UUID:
+    """`get_current_user`ı sahte bir kullanıcıyla değiştirir (CLAUDE.md: testler
+    gerçek Supabase auth'a hiç gitmez). Repository'ye ihtiyaç duymayan, ama
+    artık auth isteyen route'lar (ör. documents/parse) için tek başına
+    kullanılır."""
+    app.dependency_overrides[get_current_user] = lambda: TEST_USER_ID
+    yield TEST_USER_ID
+    app.dependency_overrides.pop(get_current_user, None)
+
+
+@pytest.fixture
+def analysis_repository(authenticated_user: UUID) -> InMemoryAnalysisRepository:
+    """API testleri gerçek DB'ye değil InMemory repoya bağlanır (CLAUDE.md:
+    `get_repository` `app.dependency_overrides` ile değiştirilir)."""
     repository = InMemoryAnalysisRepository()
     app.dependency_overrides[get_repository] = lambda: repository
-    app.dependency_overrides[get_current_user] = lambda: TEST_USER_ID
     yield repository
     app.dependency_overrides.pop(get_repository, None)
-    app.dependency_overrides.pop(get_current_user, None)
 
 
 def override_current_user(user_id: UUID) -> None:
