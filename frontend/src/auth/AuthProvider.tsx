@@ -25,7 +25,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       isLoading,
       signInWithGoogle: async () => {
-        await supabase.auth.signInWithOAuth({ provider: 'google' })
+        // redirectTo belirtilmezse Supabase, Dashboard'daki tek bir "Site URL"
+        // ayarına döner — bu da lokal/prod arasında sürekli değiştirilmesi
+        // gereken bir ayar olurdu. Bunun yerine mevcut origin'i (localhost
+        // veya prod) her seferinde açıkça gönderiyoruz; ikisi de Supabase'in
+        // Redirect URLs izin listesinde zaten kayıtlı.
+        await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: window.location.origin },
+        })
       },
       signOut: async () => {
         await supabase.auth.signOut()
