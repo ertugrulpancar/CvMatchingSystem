@@ -4,9 +4,14 @@
     "signOut": "Sign Out"
   },
   "login": {
-    "title": "Sign In",
-    "description": "You need to sign in with your Google account to run an analysis.",
-    "googleButton": "Sign in with Google"
+    "badge": "AI-Powered",
+    "title": "See how well your CV matches the job in seconds",
+    "subtitle": "Sign in with Google, paste your CV and the job posting, and get a scored, evidence-based match analysis.",
+    "feature1": "Requirement-based match score",
+    "feature2": "Evidence-based, explained results",
+    "feature3": "Your CV text is never stored",
+    "googleButton": "Sign in with Google",
+    "privacyNote": "Used only for analysis, never stored permanently."
   },
   "newAnalysis": {
     "jobLabel": "Job Posting",
